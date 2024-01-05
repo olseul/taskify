@@ -162,6 +162,11 @@ const Input = styled.input`
   color: var(--Black33);
   font-size: 1.6rem;
 
+  &:focus {
+    outline: none;
+    border-color: var(--Main);
+  }
+
   @media (max-width: ${DeviceSize.mobile}) {
     height: 4.2rem;
 
