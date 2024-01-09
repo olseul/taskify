@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next export",
-    "start": "next start",
+    "build": "next build",
+    "start": "next export",
     "lint": "next lint",
     "prepare": "husky install",
     "prettier": "prettier --write /**/*.{ts,tsx}"
