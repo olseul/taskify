@@ -202,7 +202,7 @@ const LeftWrapper = styled.div`
 `;
 
 const RightWrapper = styled.div`
-  width: 100%;
+  /* width: 100%; */
 
   margin-left: 1rem;
 `;
@@ -269,9 +269,8 @@ const CommentItem = styled.div`
 
 const CommentContent = styled.pre`
   margin: 0.6rem 0 1.2rem 0;
-
-  display: flex;
-  justify-content: flex-start;
+  white-space: pre-wrap;
+  word-break: break-word;
 `;
 
 const FunctionWrapper = styled.div`
