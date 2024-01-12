@@ -65,7 +65,6 @@ const Comments = ({ cardData }: { cardData: Card }) => {
 
   const submitComment = async (comment: string) => {
     comment = comment.replaceAll(/(\n|\r\n)/g, "<br>");
-    console.log(comment);
     const res = await postComments({
       token,
       content: comment,
@@ -74,7 +73,10 @@ const Comments = ({ cardData }: { cardData: Card }) => {
       dashboardId: Number(boardid),
     });
 
-    if (res) res.content = res?.content.replaceAll("<br>", "\n");
+    if (res) {
+      res.content = res?.content.replaceAll("<br>", "\n");
+      // console.log(res?.content.replaceAll("<br>", "d"));
+    }
     if (res && commentsData.length == 0) setCommentsData([res].splice(0));
     if (res && commentsData.length > 0) setCommentsData([res, ...commentsData]);
     watchCommentCount();
@@ -142,7 +144,7 @@ const Comments = ({ cardData }: { cardData: Card }) => {
                   <Edit type="submit">저장</Edit>
                 </form>
               ) : (
-                <CommentContent>{comment.content}</CommentContent>
+                <CommentContent>{comment.content.replaceAll("<br>", "\n")}</CommentContent>
               )}
               <FunctionWrapper>
                 {!isEditing || editingCommentId !== comment.id ? <Edit onClick={() => handleEditClick(comment.id, comment.content)}>수정</Edit> : null}
@@ -290,12 +292,14 @@ const ProfileImage = styled.div<{ url: string }>`
 
 const NoProfileImageWrapper = styled.div`
   width: 2.7rem;
+  height: 2.7rem;
 
   line-height: 2.7rem;
   font-size: 1.3rem;
 
   @media (max-width: ${DeviceSize.mobile}) {
     width: 2.4rem;
+    height: 2.4rem;
 
     line-height: 2.4rem;
   }
