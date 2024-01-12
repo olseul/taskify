@@ -202,7 +202,7 @@ const LeftWrapper = styled.div`
 `;
 
 const RightWrapper = styled.div`
-  /* width: 100%; */
+  width: 100%;
 
   margin-left: 1rem;
 `;
@@ -220,6 +220,7 @@ const CommentTextarea = styled.textarea`
 
   &:focus {
     border-color: var(--Main);
+    outline: none;
   }
 
   &::-webkit-scrollbar {
