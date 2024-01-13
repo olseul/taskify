@@ -11,6 +11,7 @@ import { formatUpdatedAt } from "@/utils/FormatDate";
 import NoProfileImage from "@/components/common/NoProfileImage/ProfileImage";
 import { useAtom } from "jotai";
 import { commentScrollAtom } from "@/states/atoms";
+import { getUsers } from "@/api/users";
 
 const Comments = ({ cardData }: { cardData: Card }) => {
   const [inputValue, setInputValue] = useState("");
@@ -23,6 +24,7 @@ const Comments = ({ cardData }: { cardData: Card }) => {
   const router = useRouter();
   const { boardid } = router.query;
   const token = localStorage.getItem("accessToken");
+  const [currentUser, setCurrentUser] = useState<string | null>(null); //댓글 렌더링시 로그인 정보와 댓글작성자를 비교
 
   const loadCommentsData = async () => {
     setIsLoading(true);
@@ -75,7 +77,6 @@ const Comments = ({ cardData }: { cardData: Card }) => {
 
     if (res) {
       res.content = res?.content.replaceAll("<br>", "\n");
-      // console.log(res?.content.replaceAll("<br>", "d"));
     }
     if (res && commentsData.length == 0) setCommentsData([res].splice(0));
     if (res && commentsData.length > 0) setCommentsData([res, ...commentsData]);
@@ -109,6 +110,21 @@ const Comments = ({ cardData }: { cardData: Card }) => {
   useEffect(() => {
     loadCommentsData();
   }, [boardid]);
+
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      const token = localStorage.getItem("accessToken");
+      if (token) {
+        const res = await getUsers({ token });
+        console.log("currentUser:", res);
+        if (res !== null) {
+          setCurrentUser(res);
+        }
+      }
+    };
+    fetchCurrentUser();
+  }, []);
+
   return (
     <>
       <StyledDiv>
@@ -147,8 +163,12 @@ const Comments = ({ cardData }: { cardData: Card }) => {
                 <CommentContent>{comment.content.replaceAll("<br>", "\n")}</CommentContent>
               )}
               <FunctionWrapper>
-                {!isEditing || editingCommentId !== comment.id ? <Edit onClick={() => handleEditClick(comment.id, comment.content)}>수정</Edit> : null}
-                {!isEditing || editingCommentId !== comment.id ? <Delete onClick={() => handleDeleteClick(comment.id)}>삭제</Delete> : null}
+                {currentUser && currentUser.id === comment.author.id && (
+                  <>
+                    {!isEditing || editingCommentId !== comment.id ? <Edit onClick={() => handleEditClick(comment.id, comment.content)}>수정</Edit> : null}
+                    {!isEditing || editingCommentId !== comment.id ? <Delete onClick={() => handleDeleteClick(comment.id)}>삭제</Delete> : null}
+                  </>
+                )}
               </FunctionWrapper>
             </RightWrapper>
           </CommentItem>
@@ -200,6 +220,7 @@ const CommentTextarea = styled.textarea`
 
   &:focus {
     border-color: var(--Main);
+    outline: none;
   }
 
   &::-webkit-scrollbar {
@@ -249,9 +270,8 @@ const CommentItem = styled.div`
 
 const CommentContent = styled.pre`
   margin: 0.6rem 0 1.2rem 0;
-
-  display: flex;
-  justify-content: flex-start;
+  white-space: pre-wrap;
+  word-break: break-word;
 `;
 
 const FunctionWrapper = styled.div`
